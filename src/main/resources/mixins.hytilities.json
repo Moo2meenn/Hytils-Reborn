@@ -14,17 +14,23 @@
     "GuiNewChatMixin_LocrawHider",
     "GuiPlayerTabOverlayMixin_HideNPCs",
     "GuiPlayerTabOverlayMixin_HidePing",
-    "lineseparator.GuiUtilRenderComponentsMixin",
     "LayerArmorBaseMixin_HideIngameArmour",
     "MinecraftMixin_LeftClickInteract",
-    "lineseparator.GuiNewChatMixin",
     "MinecraftMixin_LimboLimiter",
     "NetHandlerPlayClientMixin_GameChecker",
+    "coloredbeds.BlockMixin",
+    "coloredbeds.BlockMixin$BlockAccessor",
     "cosmetics.RenderItemMixin",
     "cosmetics.WorldMixin",
+    "lineseparator.GuiNewChatMixin",
+    "lineseparator.GuiUtilRenderComponentsMixin",
     "overlay.BlockModelRendererMixin_NoOptiFine",
     "overlay.BlockModelRendererMixin_OptiFine",
     "overlay.VertexLighterFlatMixin"
   ],
-  "verbose": true
+  "verbose": true,
+  "client": [
+    "coloredbeds.BlockModelShapesMixin",
+    "coloredbeds.BlockRendererDispatcherMixin"
+  ]
 }
