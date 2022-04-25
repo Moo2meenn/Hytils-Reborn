@@ -18,6 +18,7 @@
 
 package cc.woverflow.hytils.handlers.chat.modules.triggers;
 
+import cc.woverflow.hytils.HytilsReborn;
 import cc.woverflow.hytils.config.HytilsConfig;
 import gg.essential.api.utils.Multithreading;
 import net.minecraft.client.Minecraft;
@@ -25,85 +26,78 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 
 public class AutoWB {
     @SubscribeEvent
-    //The chat receive event
-    public void onChat(ClientChatReceivedEvent event){
-        String msg = EnumChatFormatting.getTextWithoutFormattingCodes(event.message.getUnformattedText());
-        //Trimming of the message so its left only with the name
-        if (msg.startsWith("Guild > ") && msg.endsWith(" joined.") && (HytilsConfig.AutoWB) && (HytilsConfig.guildAutoWB) || msg.startsWith("G > ") && msg.endsWith(" joined.") && (HytilsConfig.AutoWB) && (HytilsConfig.guildAutoWB)){
-            System.out.println("Worked");
-            String msgTrimmed = msg.replace("Guild > ","").replace(" joined.","").replace("G > ", "");
-            String message = HytilsConfig.AutoWBsendMessage1.replace("%player%", msgTrimmed);
-            //What happens when you have random message enabled
-            if (HytilsConfig.randomAutoWB){
-                while(true) {
-                    int r = (int) (Math.random()*10);
-                    String sendMessage = new String [] {
-                        HytilsConfig.AutoWBsendMessage1,
-                        HytilsConfig.AutoWBsendMessage2,
-                        HytilsConfig.AutoWBsendMessage3,
-                        HytilsConfig.AutoWBsendMessage4,
-                        HytilsConfig.AutoWBsendMessage5,
-                        HytilsConfig.AutoWBsendMessage6,
-                        HytilsConfig.AutoWBsendMessage7,
-                        HytilsConfig.AutoWBsendMessage8,
-                        HytilsConfig.AutoWBsendMessage9,
-                        HytilsConfig.AutoWBsendMessage10
-                    }[r].replace("%player%", msgTrimmed);
-                    if (!sendMessage.equals("")){
-                        Multithreading.schedule(() -> {
-                            Minecraft.getMinecraft().thePlayer.sendChatMessage(
-                                "/gc " + sendMessage
-                            );}, HytilsConfig.AutoWBsendSeconds, TimeUnit.SECONDS);
-                        break;
-                    }
-                }
-                //What happens when you have the random message disabled
-            }else{ Multithreading.schedule(() -> {
-                Minecraft.getMinecraft().thePlayer.sendChatMessage(
-                    "/gc " + message
-                );
-            }, HytilsConfig.AutoWBsendSeconds, TimeUnit.SECONDS);
-            }
-        }
+    public void onChat(ClientChatReceivedEvent event) {
+        if (HytilsConfig.AutoWB != 0) {
+            String msg = event.message.getFormattedText().trim();
+            Matcher matcher = HytilsReborn.INSTANCE.getLanguageHandler().getCurrent().chatRestylerStatusPatternRegex.matcher(msg);
+            if (matcher.matches()) {
+                // TODO: eventually replace with a better option that allows user to pick one of the 10 options
+                String message = HytilsConfig.AutoWBsendMessage1.replace("%player%", matcher.group("player"));
 
-        if (msg.startsWith("Friend > ") && msg.endsWith(" joined.") && (HytilsConfig.AutoWB) && (HytilsConfig.friendsAutoWB) || msg.startsWith("F > ") && msg.endsWith(" joined.") && (HytilsConfig.AutoWB) && (HytilsConfig.friendsAutoWB)){
-            String name = msg.replace("Friend > ","").replace(" joined.","").replace("F > ", "");
-            String message = HytilsConfig.AutoWBsendMessage1.replace("%player%", name);
-            //What happens when you have random message enabled in the configs
-            if (HytilsConfig.randomAutoWB){
-                while(true) {
-                    int r = (int) (Math.random()*10);
-                    String sendMessage = new String [] {
-                        HytilsConfig.AutoWBsendMessage1,
-                        HytilsConfig.AutoWBsendMessage2,
-                        HytilsConfig.AutoWBsendMessage3,
-                        HytilsConfig.AutoWBsendMessage4,
-                        HytilsConfig.AutoWBsendMessage5,
-                        HytilsConfig.AutoWBsendMessage6,
-                        HytilsConfig.AutoWBsendMessage7,
-                        HytilsConfig.AutoWBsendMessage8,
-                        HytilsConfig.AutoWBsendMessage9,
-                        HytilsConfig.AutoWBsendMessage10
-                    }[r].replace("%player%", name);
+                boolean isGuild = false;
+                boolean isFriend = false;
+                String chatType = null;
 
-                    if (!sendMessage.equals("")){
-                        Multithreading.schedule(() -> {
-                            Minecraft.getMinecraft().thePlayer.sendChatMessage(
-                                "/msg " + name + " " + sendMessage
-                            );}, HytilsConfig.AutoWBsendSeconds, TimeUnit.SECONDS);
+                switch (HytilsConfig.AutoWB) {
+                    case 1:
+                        isGuild = true;
                         break;
-                    }
+                    case 2:
+                        isFriend = true;
+                        break;
+                    case 3:
+                        isGuild = true;
+                        isFriend = true;
+                        break;
                 }
-                //What happens when you have the random message disabled
-            }else{ Multithreading.schedule(() -> {
-                Minecraft.getMinecraft().thePlayer.sendChatMessage(
-                    "/msg " + name + message
-                );
-            }, HytilsConfig.AutoWBsendSeconds, TimeUnit.SECONDS);
+
+                if ((matcher.group("type").equals("§2Guild") || matcher.group("type").equals("§2§2G")) && matcher.group("status").equals("joined") && isGuild) {
+                    chatType = "/gc ";
+                }
+                if ((matcher.group("type").equals("§aFriend") || matcher.group("type").equals("§a§aF")) && matcher.group("status").equals("joined") && isFriend) {
+                    chatType = "/msg " + matcher.group("player" + " ");
+                }
+
+                String finalChatType = chatType;
+
+                if (HytilsConfig.randomAutoWB) {
+                    int r = (int) (Math.random() * 10);
+                    while (true) {
+                        String sendMessage = new String[]{
+                            HytilsConfig.AutoWBsendMessage1,
+                            HytilsConfig.AutoWBsendMessage2,
+                            HytilsConfig.AutoWBsendMessage3,
+                            HytilsConfig.AutoWBsendMessage4,
+                            HytilsConfig.AutoWBsendMessage5,
+                            HytilsConfig.AutoWBsendMessage6,
+                            HytilsConfig.AutoWBsendMessage7,
+                            HytilsConfig.AutoWBsendMessage8,
+                            HytilsConfig.AutoWBsendMessage9,
+                            HytilsConfig.AutoWBsendMessage10
+                        }[r].replace("%player%", matcher.group("player"));
+                        if (!sendMessage.equals("")) {
+                            Multithreading.schedule(() -> {
+                                Minecraft.getMinecraft().thePlayer.sendChatMessage(
+                                    finalChatType + sendMessage
+                                );
+                            }, HytilsConfig.AutoWBsendSeconds, TimeUnit.SECONDS);
+                            break;
+                        }
+
+                    }
+                } else {
+                    Multithreading.schedule(() -> {
+                        Minecraft.getMinecraft().thePlayer.sendChatMessage(
+                            finalChatType + message
+                        );
+                    }, HytilsConfig.AutoWBsendSeconds, TimeUnit.SECONDS);
+                }
             }
         }
     }

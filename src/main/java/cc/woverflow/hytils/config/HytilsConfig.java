@@ -467,28 +467,13 @@ public class HytilsConfig extends Vigilant {
     // AutoWB
 
     @Property(
-        type = PropertyType.SWITCH,
+        type = PropertyType.SELECTOR,
         name = "AutoWB",
         description = "Says configurable message to your friends/guild when they join.",
-        category = "Chat", subcategory = "AutoWB"
+        category = "Chat", subcategory = "AutoWB",
+        options = {"Off", "Friends", "Guild", "Both"}
     )
-    public static boolean AutoWB = false;
-
-    @Property(
-        type = PropertyType.SWITCH,
-        name = "Toggle AutoWB for Guild",
-        description = "Toggles if the AutoWB message gets send to Guild.",
-        category = "Chat", subcategory = "AutoWB"
-    )
-    public static boolean guildAutoWB = true;
-
-    @Property(
-        type = PropertyType.SWITCH,
-        name = "Toggle AutoWB for Friends",
-        description = "Toggles If the AutoWB message gets send to Friends.",
-        category = "Chat", subcategory = "AutoWB"
-    )
-    public static boolean friendsAutoWB = true;
+    public static int AutoWB = 0;
 
     @Property(
         type = PropertyType.SLIDER,
@@ -840,11 +825,11 @@ public class HytilsConfig extends Vigilant {
         category = "Game", subcategory = "Visual"
     )
     public static void editHeightOverlay() {
-       if (manuallyEditHeightOverlay) {
-           EssentialAPI.getGuiUtil().openScreen(HytilsReborn.INSTANCE.getBlockConfig().gui());
-       } else {
-           EssentialAPI.getNotifications().push("Hytils Reborn", "You do not have manual height overlay enabled!");
-       }
+        if (manuallyEditHeightOverlay) {
+            EssentialAPI.getGuiUtil().openScreen(HytilsReborn.INSTANCE.getBlockConfig().gui());
+        } else {
+            EssentialAPI.getNotifications().push("Hytils Reborn", "You do not have manual height overlay enabled!");
+        }
     }
 
     @Property(
@@ -992,20 +977,18 @@ public class HytilsConfig extends Vigilant {
 
         addDependency("antiGL", "autoGL");
 
-        addDependency("guildAutoWB", "AutoWB");
-        addDependency("friendsAutoWB", "AutoWB");
-        addDependency("AutoWBsendSeconds", "AutoWB");
-        addDependency("AutoWBsendMessage1", "AutoWB");
-        addDependency("randomAutoWB", "AutoWB");
-        addDependency("AutoWBsendMessage2", "AutoWB");
-        addDependency("AutoWBsendMessage3", "AutoWB");
-        addDependency("AutoWBsendMessage4", "AutoWB");
-        addDependency("AutoWBsendMessage5", "AutoWB");
-        addDependency("AutoWBsendMessage6", "AutoWB");
-        addDependency("AutoWBsendMessage7", "AutoWB");
-        addDependency("AutoWBsendMessage8", "AutoWB");
-        addDependency("AutoWBsendMessage9", "AutoWB");
-        addDependency("AutoWBsendMessage10", "AutoWB");
+//        addDependency("AutoWBsendSeconds", "AutoWB");
+//        addDependency("AutoWBsendMessage1", "AutoWB");
+//        addDependency("randomAutoWB", "AutoWB");
+//        addDependency("AutoWBsendMessage2", "AutoWB");
+//        addDependency("AutoWBsendMessage3", "AutoWB");
+//        addDependency("AutoWBsendMessage4", "AutoWB");
+//        addDependency("AutoWBsendMessage5", "AutoWB");
+//        addDependency("AutoWBsendMessage6", "AutoWB");
+//        addDependency("AutoWBsendMessage7", "AutoWB");
+//        addDependency("AutoWBsendMessage8", "AutoWB");
+//        addDependency("AutoWBsendMessage9", "AutoWB");
+//        addDependency("AutoWBsendMessage10", "AutoWB");
 
         addDependency("disableNotifyMiningFatigueSkyblock", "notifyMiningFatigue");
 
